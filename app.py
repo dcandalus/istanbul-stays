@@ -291,9 +291,7 @@ with tab_manage:
         with st.form("delete_listing"):
             del_id = st.number_input("Listing ID", min_value=1, step=1, key="del_id")
             st.caption(
-                "Reviews belonging to the listing are removed first, because the "
-                "foreign key does not allow a review to reference a listing that "
-                "no longer exists."
+                "The reviews for this listing get deleted first, since the foreign key won't let a review point to a listing that doesn't exist."
             )
             if st.form_submit_button("Delete listing"):
                 cur = conn.cursor()
