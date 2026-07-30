@@ -235,8 +235,7 @@ with tab_insights:
 # ================================================================ TAB 3
 with tab_manage:
     st.write(
-        "Add, update, or remove listings. All changes are written to the database "
-        "and respect the primary key and foreign key constraints."
+        "Listings can be updated or added/removed here."
     )
 
     add, edit, remove = st.columns(3)
