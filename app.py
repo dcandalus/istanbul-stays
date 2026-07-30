@@ -19,6 +19,8 @@ def get_connection():
     """Open the SQLite database and turn on foreign key enforcement."""
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.execute("PRAGMA foreign_keys = ON;")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_reviews_listing_id ON reviews(listing_id);")
+    conn.commit()
     return conn
 
 
