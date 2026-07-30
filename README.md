@@ -9,8 +9,8 @@ tool where users can filter listings, read guest reviews, explore pricing trends
 add, update, or remove listings.
 
 **Author:** Dany Chamseddine
-**Course:** [course number / term]
-**Live app:** [paste your Streamlit Community Cloud URL here]
+**Course:** 
+**Live app:** 
 
 ---
 
