@@ -68,6 +68,7 @@ with tab_search:
     )
     max_nights = st.sidebar.slider("Maximum minimum-night requirement", 1, 30, 7)
     only_available = st.sidebar.checkbox("Only listings available this year", value=False)
+    reviewed_only = st.sidebar.checkbox("Only listings that have reviews", value=True)
     limit = st.sidebar.select_slider("Results to show", [25, 50, 100, 250], value=50)
 
     # Build the WHERE clause from whichever filters the user selected
@@ -84,6 +85,11 @@ with tab_search:
 
     if only_available:
         clauses.append("availability_365 > 0")
+
+    if reviewed_only:
+        clauses.append(
+            "EXISTS (SELECT 1 FROM reviews WHERE reviews.listing_id = listings.id)"
+        )
 
     where = " AND ".join(clauses)
 
