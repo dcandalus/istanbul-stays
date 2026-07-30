@@ -7,6 +7,7 @@ Database schema, constraints, and SQL query logic authored by Dany Chamseddine.
 import sqlite3
 import pandas as pd
 import streamlit as st
+import pydeck as pdk
 
 DB_PATH = "istanbul_app.db"
 
@@ -124,8 +125,35 @@ with tab_search:
         )
 
         st.subheader("Where these listings are")
-        st.map(results[["latitude", "longitude"]].dropna(), size=20)
+        map_data = results.dropna(subset=["latitude", "longitude"]).copy()
+        map_data["price_label"] = map_data["price"].map(lambda p: f"{p:,.0f} TRY")
 
+        st.pydeck_chart(
+            pdk.Deck(
+                map_style=None,
+                initial_view_state=pdk.ViewState(
+                    latitude=map_data["latitude"].mean(),
+                    longitude=map_data["longitude"].mean(),
+                    zoom=10,
+                ),
+                layers=[
+                    pdk.Layer(
+                        "ScatterplotLayer",
+                        data=map_data,
+                        get_position="[longitude, latitude]",
+                        get_fill_color=[255, 75, 75, 160],
+                        get_radius=120,
+                        radius_min_pixels=4,
+                        radius_max_pixels=20,
+                        pickable=True,
+                    )
+                ],
+                tooltip={
+                    "html": "<b>{name}</b><br/>{neighbourhood} · {room_type}<br/>{price_label} per night",
+                    "style": {"backgroundColor": "#262730", "color": "white"},
+                },
+            )
+        )
         # ---- reviews for one listing (JOIN between the two tables)
         st.subheader("Guest reviews")
         options = {f"{r['name']}  -  {r['neighbourhood']}": r["id"] for _, r in results.iterrows()}
