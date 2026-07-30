@@ -47,24 +47,18 @@ minimum_nights    INTEGER
 availability_365  INTEGER
 ```
 
-**Constraints**
+The listing table has all the information about listings, and it holds the main primary key to join when querying between both tables: the id column. This join is possible because listings.id and reviews.listing_id (which is the foreign key of the reviews table) both contain the id of the listing, allowing them to be matched to reveal reviews about individual listings.  A row in the listings table is a listing with all of its details such as the neighborhood and yearly availability, while a row in the reviews table is one individual review and its commenter. Each row has the id of the listing attached to it, allowing us to perform joins on the id of the listing. Through this, we can have both tables in their own respective element, but we also allow for the possibility of joins (as signified by the 1 listing -> many reviews notation) to ensure that 1 listing can return several reviews. This allows users to see reviews based on different characteristics of the listing, such as what neighborhood it is in and whatnot.
 
-- `id` is an `INTEGER PRIMARY KEY` in both tables, so every row is uniquely identifiable
-- `listing_id` is `NOT NULL` — a review that belongs to no listing is meaningless
-- `FOREIGN KEY (listing_id) REFERENCES listings(id)` — a review can never reference a
-  listing that does not exist
-- `PRAGMA foreign_keys = ON` is set on every connection, because SQLite does not enforce
-  foreign keys unless explicitly told to
-- Data types: `REAL` for price and coordinates, `INTEGER` for counts, `TEXT` for names,
-  dates, and comments
+Several changes were made throughout the handling of the actual data. I removed pre-existing columns from the listing table due to them being mostly empty or blank: license and neighborhood_group.  I also opted to keep room_type as a column instead of fleshing it out to a table due to it having only four values. Host_id and host_name were also excluded from the final listings table for privacy concerns.
 
-**Design decisions**
+Here is a list of the constraints featured in creating the tables and database:
+Foreign keys were explicitly turned on using cur.execute("PRAGMA foreign_keys = ON;") because SQLite ignores foreign keys automatically unless told otherwise.
+Id in both tables was made as an INTEGER PRIMARY KEY; PRIMARY KEY so that each row can be uniquely identified and INTEGER so that the table recognizes it’s always a non decimal number
+Listing_id was also an INTEGER and was marked NOT NULL as a null listing review is useless
+I ensured “FOREIGN KEY (listing_id) REFERENCES listings(id)” was implemented so that listing_id always refers to a listing that DOES exist
+Appropriate data types such as REAL for decimals (latitude/longitude) and INTEGER for availability_365 were implemented in the creation of the tables.
 
-- `room_type` is stored as a column rather than its own table, since it has only four
-  possible values
-- `neighbourhood_group` and `license` were dropped from the raw data because they were
-  empty or mostly blank
-- `host_id` and `host_name` were excluded for privacy reasons
+These rules are absolutely mandatory to ensure smooth data importation, retrieval, and manipulation; the main thing being that the data needs to always refer to listings that actually exist.
 
 ---
 
